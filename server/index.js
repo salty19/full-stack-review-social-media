@@ -11,7 +11,7 @@ const verifyUser = require('./middlewares/verifyUser')
 const app = express()
 const {CONNECTION_STRING, SERVER_PORT, SESSION_SECRET} = process.env  
 
-
+app.use(express.json())
 app.use(session({
     secret: SESSION_SECRET,
     resave: false,
@@ -23,18 +23,17 @@ app.use(session({
 
 //#auth endpoints
 //TODO login, register, logout, getUser
-app.post('/auth/register', verifyUser, authCtrl.register)
-app.post('/auth/login', verifyUser, authCtrl.login)
-app.delete('/auth/logout', verifyUser, authCtrl.logout)
-app.get('/auth/user', verifyUser, authCtrl.getUser) 
-
+app.post('/auth/register', authCtrl.register)
+app.post('/auth/login', authCtrl.login)
+app.delete('/auth/logout', authCtrl.logout)
+app.get('/auth/user', authCtrl.getUser) 
 
 //#posts endpoints
 //TODO get post put delete posts
-app.get('/api/posts', postCtrl.getPosts)
-app.post('/api/posts', postCtrl.addPost)
-app.put('/api/posts/:post_id', postCtrl.editPost)
-app.delete('/api/posts/:post_id', postCtrl.deletePost)
+app.get('/api/posts', verifyUser, postCtrl.getPosts)
+app.post('/api/posts', verifyUser, postCtrl.addPost)
+app.put('/api/posts/:post_id', verifyUser, postCtrl.editPost)
+app.delete('/api/posts/:post_id', verifyUser, postCtrl.deletePost)
 
 
 massive({
